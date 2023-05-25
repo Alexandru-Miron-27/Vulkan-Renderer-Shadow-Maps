@@ -1,0 +1,482 @@
+# Material file
+
+newmtl M_FirePit_Inst_nofire
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FirePit_Inst_nofire_0_BaseColor.png
+	map_Kd tex/M_FirePit_Inst_nofire_0_BaseColor.png
+	map_Pr tex/r-M_FirePit_Inst_nofire_0_Specular.png
+	map_Pm tex/m-M_FirePit_Inst_nofire_0_Specular.png
+	norm tex/M_FirePit_Inst_nofire_0_Normal.png
+
+newmtl M_Railing_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Railing_Inst_0_BaseColor.png
+	map_Kd tex/M_Railing_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Railing_Inst_0_Specular.png
+	map_Pm tex/m-M_Railing_Inst_0_Specular.png
+	norm tex/M_Railing_Inst_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.005
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_7_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_7_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_7_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_7_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_7_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.006
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_6_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_6_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_6_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_6_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_6_Normal.png
+
+newmtl M_Dome_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Dome_Inst_0_BaseColor.png
+	map_Kd tex/M_Dome_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Dome_Inst_0_Specular.png
+	map_Pm tex/m-M_Dome_Inst_0_Specular.png
+	norm tex/M_Dome_Inst_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.008
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_4_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_4_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_4_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_4_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_4_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.009
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_3_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_3_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_3_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_3_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_3_Normal.png
+
+newmtl M_FirePit_Inst_Glow
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FirePit_Inst_Glow_0_BaseColor.png
+	map_Kd tex/M_FirePit_Inst_Glow_0_BaseColor.png
+	map_Pr tex/r-M_FirePit_Inst_Glow_0_Specular.png
+	map_Pm tex/m-M_FirePit_Inst_Glow_0_Specular.png
+	norm tex/M_FirePit_Inst_Glow_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.011
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_1_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_1_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_1_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_1_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_1_Normal.png
+
+newmtl M_FloorTiles1_Inst_Inst2
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FloorTiles1_Inst_Inst2_0_BaseColor.png
+	map_Kd tex/M_FloorTiles1_Inst_Inst2_0_BaseColor.png
+	map_Pr tex/r-M_FloorTiles1_Inst_Inst2_0_Specular.png
+	map_Pm tex/m-M_FloorTiles1_Inst_Inst2_0_Specular.png
+	norm tex/M_FloorTiles1_Inst_Inst2_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.010
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_2_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_2_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_2_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_2_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_2_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.001
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_11_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_11_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_11_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_11_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_11_Normal.png
+
+newmtl M_Rocks_Inst.001
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Rocks_Inst_1_BaseColor.png
+	map_Kd tex/M_Rocks_Inst_1_BaseColor.png
+	map_Pr tex/r-M_Rocks_Inst_1_Specular.png
+	map_Pm tex/m-M_Rocks_Inst_1_Specular.png
+	norm tex/M_Rocks_Inst_1_Normal.png
+
+newmtl M_TreeTrunk01_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_TreeTrunk01_Inst_0_BaseColor.png
+	map_Kd tex/M_TreeTrunk01_Inst_0_BaseColor.png
+	map_Pr tex/r-M_TreeTrunk01_Inst_0_Specular.png
+	map_Pm tex/m-M_TreeTrunk01_Inst_0_Specular.png
+	norm tex/M_TreeTrunk01_Inst_0_Normal.png
+
+newmtl M_Tree_Branches_Inst.DoubleSided
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Tree_Branches_Inst_0_BaseColor-M_Tree_Branches_Inst_0_BaseColor.png
+	map_Kd tex/M_Tree_Branches_Inst_0_BaseColor-M_Tree_Branches_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Tree_Branches_Inst_0_Specular.png
+	map_Pm tex/m-M_Tree_Branches_Inst_0_Specular.png
+	norm tex/M_Tree_Branches_Inst_0_Normal.png
+
+newmtl M_Arch_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Arch_Inst_0_BaseColor.png
+	map_Kd tex/M_Arch_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Arch_Inst_0_Specular.png
+	map_Pm tex/m-M_Arch_Inst_0_Specular.png
+	norm tex/M_Arch_Inst_0_Normal.png
+
+newmtl M_StoneBrickWall_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_StoneBrickWall_Inst_0_BaseColor.png
+	map_Kd tex/M_StoneBrickWall_Inst_0_BaseColor.png
+	map_Pr tex/r-M_StoneBrickWall_Inst_0_Specular.png
+	map_Pm tex/m-M_StoneBrickWall_Inst_0_Specular.png
+	norm tex/M_StoneBrickWall_Inst_0_Normal.png
+
+newmtl M_FloorTiles1_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FloorTiles1_Inst_0_BaseColor.png
+	map_Kd tex/M_FloorTiles1_Inst_0_BaseColor.png
+	map_Pr tex/r-M_FloorTiles1_Inst_0_Specular.png
+	map_Pm tex/m-M_FloorTiles1_Inst_0_Specular.png
+	norm tex/M_FloorTiles1_Inst_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.007
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_5_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_5_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_5_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_5_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_5_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.012
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_0_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_0_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_0_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_0_Normal.png
+
+newmtl M_Shield_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Shield_Inst_0_BaseColor.png
+	map_Kd tex/M_Shield_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Shield_Inst_0_Specular.png
+	map_Pm tex/m-M_Shield_Inst_0_Specular.png
+	norm tex/M_Shield_Inst_0_Normal.png
+
+newmtl M_FloorTiles2_Inst_REd
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FloorTiles2_Inst_REd_0_BaseColor.png
+	map_Kd tex/M_FloorTiles2_Inst_REd_0_BaseColor.png
+	map_Pr tex/r-M_FloorTiles2_Inst_REd_0_Specular.png
+	map_Pm tex/m-M_FloorTiles2_Inst_REd_0_Specular.png
+	norm tex/M_FloorTiles2_Inst_REd_0_Normal.png
+
+newmtl M_Trim_Inst_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Trim_Inst_Inst_0_BaseColor.png
+	map_Kd tex/M_Trim_Inst_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Trim_Inst_Inst_0_Specular.png
+	map_Pm tex/m-M_Trim_Inst_Inst_0_Specular.png
+	norm tex/M_Trim_Inst_Inst_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.002
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_10_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_10_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_10_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_10_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_10_Normal.png
+
+newmtl M_Dome_2
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Dome_2_0_BaseColor.png
+	map_Kd tex/M_Dome_2_0_BaseColor.png
+	map_Pr tex/r-M_Dome_2_0_Specular.png
+	map_Pm tex/m-M_Dome_2_0_Specular.png
+	norm tex/M_Dome_2_0_Normal.png
+
+newmtl M_Arch_Inst_Red
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Arch_Inst_Red_0_BaseColor.png
+	map_Kd tex/M_Arch_Inst_Red_0_BaseColor.png
+	map_Pr tex/r-M_Arch_Inst_Red_0_Specular.png
+	map_Pm tex/m-M_Arch_Inst_Red_0_Specular.png
+	norm tex/M_Arch_Inst_Red_0_Normal.png
+
+newmtl M_Statue_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Statue_Inst_0_BaseColor.png
+	map_Kd tex/M_Statue_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Statue_Inst_0_Specular.png
+	map_Pm tex/m-M_Statue_Inst_0_Specular.png
+	norm tex/M_Statue_Inst_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.003
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_9_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_9_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_9_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_9_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_9_Normal.png
+
+newmtl M_Rocks_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Rocks_Inst_2_BaseColor.png
+	map_Kd tex/M_Rocks_Inst_2_BaseColor.png
+	map_Pr tex/r-M_Rocks_Inst_2_Specular.png
+	map_Pm tex/m-M_Rocks_Inst_2_Specular.png
+	norm tex/M_Rocks_Inst_2_Normal.png
+
+newmtl M_StoneCeiling_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_StoneCeiling_Inst_0_BaseColor.png
+	map_Kd tex/M_StoneCeiling_Inst_0_BaseColor.png
+	map_Pr tex/r-M_StoneCeiling_Inst_0_Specular.png
+	map_Pm tex/m-M_StoneCeiling_Inst_0_Specular.png
+	norm tex/M_StoneCeiling_Inst_0_Normal.png
+
+newmtl M_Arch_Inst_2
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Arch_Inst_2_0_BaseColor.png
+	map_Kd tex/M_Arch_Inst_2_0_BaseColor.png
+	map_Pr tex/r-M_Arch_Inst_2_0_Specular.png
+	map_Pm tex/m-M_Arch_Inst_2_0_Specular.png
+	norm tex/M_Arch_Inst_2_0_Normal.png
+
+newmtl M_FloorTiles2_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FloorTiles2_Inst_0_BaseColor.png
+	map_Kd tex/M_FloorTiles2_Inst_0_BaseColor.png
+	map_Pr tex/r-M_FloorTiles2_Inst_0_Specular.png
+	map_Pm tex/m-M_FloorTiles2_Inst_0_Specular.png
+	norm tex/M_FloorTiles2_Inst_0_Normal.png
+
+newmtl M_Stairs_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Stairs_Inst_0_BaseColor.png
+	map_Kd tex/M_Stairs_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Stairs_Inst_0_Specular.png
+	map_Pm tex/m-M_Stairs_Inst_0_Specular.png
+	norm tex/M_Stairs_Inst_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst.004
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_8_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_8_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_8_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_8_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_8_Normal.png
+
+newmtl M_FloorTiles2_Inst_Inst_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FloorTiles2_Inst_Inst_Inst_0_BaseColor.png
+	map_Kd tex/M_FloorTiles2_Inst_Inst_Inst_0_BaseColor.png
+	map_Pr tex/r-M_FloorTiles2_Inst_Inst_Inst_0_Specular.png
+	map_Pm tex/m-M_FloorTiles2_Inst_Inst_Inst_0_Specular.png
+	norm tex/M_FloorTiles2_Inst_Inst_Inst_0_Normal.png
+
+newmtl M_Arch_Inst_Red_2
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Arch_Inst_Red_2_0_BaseColor.png
+	map_Kd tex/M_Arch_Inst_Red_2_0_BaseColor.png
+	map_Pr tex/r-M_Arch_Inst_Red_2_0_Specular.png
+	map_Pm tex/m-M_Arch_Inst_Red_2_0_Specular.png
+	norm tex/M_Arch_Inst_Red_2_0_Normal.png
+
+newmtl Soul_Tree011M_Inst.DoubleSided
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/Soul_Tree011M_Inst_0_BaseColor-Soul_Tree011M_Inst_0_BaseColor.png
+	map_Kd tex/Soul_Tree011M_Inst_0_BaseColor-Soul_Tree011M_Inst_0_BaseColor.png
+	map_Pr tex/r-Soul_Tree011M_Inst_0_Specular.png
+	map_Pm tex/m-Soul_Tree011M_Inst_0_Specular.png
+	norm tex/Soul_Tree011M_Inst_0_Normal.png
+
+newmtl M_Soul_Rocks2_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Soul_Rocks2_Inst_12_BaseColor.png
+	map_Kd tex/M_Soul_Rocks2_Inst_12_BaseColor.png
+	map_Pr tex/r-M_Soul_Rocks2_Inst_12_Specular.png
+	map_Pm tex/m-M_Soul_Rocks2_Inst_12_Specular.png
+	norm tex/M_Soul_Rocks2_Inst_12_Normal.png
+
+newmtl M_Tree_Branches.DoubleSided
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Tree_Branches_0_BaseColor-M_Tree_Branches_0_BaseColor.png
+	map_Kd tex/M_Tree_Branches_0_BaseColor-M_Tree_Branches_0_BaseColor.png
+	map_Pr tex/r-M_Tree_Branches_0_Specular.png
+	map_Pm tex/m-M_Tree_Branches_0_Specular.png
+	norm tex/M_Tree_Branches_0_Normal.png
+
+newmtl M_FloorTiles1_Inst_Blue
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FloorTiles1_Inst_Blue_0_BaseColor.png
+	map_Kd tex/M_FloorTiles1_Inst_Blue_0_BaseColor.png
+	map_Pr tex/r-M_FloorTiles1_Inst_Blue_0_Specular.png
+	map_Pm tex/m-M_FloorTiles1_Inst_Blue_0_Specular.png
+	norm tex/M_FloorTiles1_Inst_Blue_0_Normal.png
+
+newmtl M_Trim_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Trim_Inst_0_BaseColor.png
+	map_Kd tex/M_Trim_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Trim_Inst_0_Specular.png
+	map_Pm tex/m-M_Trim_Inst_0_Specular.png
+	norm tex/M_Trim_Inst_0_Normal.png
+
+newmtl M_Rocks_Inst.002
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Rocks_Inst_0_BaseColor.png
+	map_Kd tex/M_Rocks_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Rocks_Inst_0_Specular.png
+	map_Pm tex/m-M_Rocks_Inst_0_Specular.png
+	norm tex/M_Rocks_Inst_0_Normal.png
+
+newmtl M_BottomTrim_Inst_Black
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_BottomTrim_Inst_Black_0_BaseColor.png
+	map_Kd tex/M_BottomTrim_Inst_Black_0_BaseColor.png
+	map_Pr tex/r-M_BottomTrim_Inst_Black_0_Specular.png
+	map_Pm tex/m-M_BottomTrim_Inst_Black_0_Specular.png
+	norm tex/M_BottomTrim_Inst_Black_0_Normal.png
+
+newmtl M_BottomTrim_Inst_UTile4
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_BottomTrim_Inst_UTile4_0_BaseColor.png
+	map_Kd tex/M_BottomTrim_Inst_UTile4_0_BaseColor.png
+	map_Pr tex/r-M_BottomTrim_Inst_UTile4_0_Specular.png
+	map_Pm tex/m-M_BottomTrim_Inst_UTile4_0_Specular.png
+	norm tex/M_BottomTrim_Inst_UTile4_0_Normal.png
+
+newmtl M_Pillar_Inst_Colored
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Pillar_Inst_Colored_0_BaseColor.png
+	map_Kd tex/M_Pillar_Inst_Colored_0_BaseColor.png
+	map_Pr tex/r-M_Pillar_Inst_Colored_0_Specular.png
+	map_Pm tex/m-M_Pillar_Inst_Colored_0_Specular.png
+	norm tex/M_Pillar_Inst_Colored_0_Normal.png
+
+newmtl M_BottomTrim_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_BottomTrim_Inst_0_BaseColor.png
+	map_Kd tex/M_BottomTrim_Inst_0_BaseColor.png
+	map_Pr tex/r-M_BottomTrim_Inst_0_Specular.png
+	map_Pm tex/m-M_BottomTrim_Inst_0_Specular.png
+	norm tex/M_BottomTrim_Inst_0_Normal.png
+
+newmtl M_FirePit_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_FirePit_Inst_0_BaseColor.png
+	map_Kd tex/M_FirePit_Inst_0_BaseColor.png
+	map_Pr tex/r-M_FirePit_Inst_0_Specular.png
+	map_Pm tex/m-M_FirePit_Inst_0_Specular.png
+	norm tex/M_FirePit_Inst_0_Normal.png
+
+newmtl M_Pillar_Inst
+	Kd 1.000000 1.000000 1.000000
+	Pm 1.000000
+	Pr 0.552786
+	map_d tex/M_Pillar_Inst_0_BaseColor.png
+	map_Kd tex/M_Pillar_Inst_0_BaseColor.png
+	map_Pr tex/r-M_Pillar_Inst_0_Specular.png
+	map_Pm tex/m-M_Pillar_Inst_0_Specular.png
+	norm tex/M_Pillar_Inst_0_Normal.png
+

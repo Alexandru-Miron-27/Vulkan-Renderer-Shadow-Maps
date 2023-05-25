@@ -1,0 +1,9 @@
+
+*.vsidx
+*.db
+*.bin
+*.ipch
+*.log
+*.tlog
+*.obj
+*.recipe

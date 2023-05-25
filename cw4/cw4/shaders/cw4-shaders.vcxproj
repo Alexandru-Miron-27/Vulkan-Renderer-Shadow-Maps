@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="debug|x64">
+      <Configuration>debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="release|x64">
+      <Configuration>release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CA5D1C1E-3613-9513-BF07-8FEA2BBC8B17}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>cw4-shaders</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <OutDir>bin\x64\debug\</OutDir>
+    <IntDir>..\..\_build_\debug-x64-msc-v143\x64\debug\cw4-shaders\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <OutDir>bin\x64\release\</OutDir>
+    <IntDir>..\..\_build_\release-x64-msc-v143\x64\release\cw4-shaders\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="default.frag">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/default.frag.spv</Outputs>
+      <Message>GLSLC: [FRAG] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="default.vert">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/default.vert.spv</Outputs>
+      <Message>GLSLC: [VERT] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="renderPassA.frag">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/renderPassA.frag.spv</Outputs>
+      <Message>GLSLC: [FRAG] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="renderPassA.vert">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/renderPassA.vert.spv</Outputs>
+      <Message>GLSLC: [VERT] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="renderPassB.frag">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/renderPassB.frag.spv</Outputs>
+      <Message>GLSLC: [FRAG] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="renderPassB.vert">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/renderPassB.vert.spv</Outputs>
+      <Message>GLSLC: [VERT] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="shaderAlphaMask.frag">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/shaderAlphaMask.frag.spv</Outputs>
+      <Message>GLSLC: [FRAG] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="shaderMaterial.frag">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/shaderMaterial.frag.spv</Outputs>
+      <Message>GLSLC: [FRAG] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="shaderMaterial.vert">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/shaderMaterial.vert.spv</Outputs>
+      <Message>GLSLC: [VERT] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="shadowmap.frag">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/shadowmap.frag.spv</Outputs>
+      <Message>GLSLC: [FRAG] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+    <CustomBuild Include="shadowmap.vert">
+      <FileType>Document</FileType>
+      <Command>IF NOT EXIST "$(SolutionDir)\assets\cw4\shaders" (mkdir "$(SolutionDir)\assets\cw4\shaders")
+"$(SolutionDir)/third_party/shaderc/win-x86_64/glslc.exe" -O  -o "$(SolutionDir)/assets/cw4/shaders/%(Filename)%(Extension).spv" "%(Identity)"</Command>
+      <Outputs>../../assets/cw4/shaders/shadowmap.vert.spv</Outputs>
+      <Message>GLSLC: [VERT] '%(Filename)%(Extension)'</Message>
+    </CustomBuild>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

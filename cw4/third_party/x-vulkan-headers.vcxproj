@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="debug|x64">
+      <Configuration>debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="release|x64">
+      <Configuration>release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A4231A7A-901C-39CC-B94E-1E51A5A618D8}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>x-vulkan-headers</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <OutDir>bin\x64\debug\</OutDir>
+    <IntDir>..\_build_\debug-x64-msc-v143\x64\debug\x-vulkan-headers\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <OutDir>bin\x64\release\</OutDir>
+    <IntDir>..\_build_\release-x64-msc-v143\x64\release\x-vulkan-headers\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="vulkan\include\vk_video\vulkan_video_codec_h264std.h" />
+    <ClInclude Include="vulkan\include\vk_video\vulkan_video_codec_h264std_decode.h" />
+    <ClInclude Include="vulkan\include\vk_video\vulkan_video_codec_h264std_encode.h" />
+    <ClInclude Include="vulkan\include\vk_video\vulkan_video_codec_h265std.h" />
+    <ClInclude Include="vulkan\include\vk_video\vulkan_video_codec_h265std_decode.h" />
+    <ClInclude Include="vulkan\include\vk_video\vulkan_video_codec_h265std_encode.h" />
+    <ClInclude Include="vulkan\include\vk_video\vulkan_video_codecs_common.h" />
+    <ClInclude Include="vulkan\include\vulkan\cast_utils.h" />
+    <ClInclude Include="vulkan\include\vulkan\hash_util.h" />
+    <ClInclude Include="vulkan\include\vulkan\hash_vk_types.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_dispatch_table_helper.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_enum_string_helper.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_extension_helper.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_format_utils.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_icd.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_layer.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_layer_config.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_layer_data.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_layer_dispatch_table.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_layer_extension_utils.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_layer_logging.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_layer_utils.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_object_types.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_platform.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_safe_struct.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_sdk_platform.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_typemap_helper.h" />
+    <ClInclude Include="vulkan\include\vulkan\vk_validation_error_messages.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_android.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_beta.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_core.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_directfb.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_enums.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_format_traits.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_fuchsia.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_funcs.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_ggp.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_handles.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_hash.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_ios.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_macos.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_metal.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_profiles.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_raii.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_screen.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_static_assertions.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_structs.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_to_string.hpp" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_vi.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_wayland.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_win32.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_xcb.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_xlib.h" />
+    <ClInclude Include="vulkan\include\vulkan\vulkan_xlib_xrandr.h" />
+    <ClInclude Include="vulkan\include\vulkan\xxhash.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
