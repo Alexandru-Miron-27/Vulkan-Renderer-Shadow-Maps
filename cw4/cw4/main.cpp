@@ -54,19 +54,17 @@ namespace
 	{
 		// Compiled shader code for the graphics pipeline
 		// See sources in exercise4/shaders/*. 
-#		define SHADERDIR_ "assets/cw3/shaders/"
-#		define ASSETSDIR_ "assets/cw3/"
-		constexpr char const* kAlphaMaskVertShaderPath = SHADERDIR_ "shaderMaterial.vert.spv";
+#		define SHADERDIR_ "assets/cw4/shaders/"
+#		define ASSETSDIR_ "assets/cw4/"
+		/*constexpr char const* kAlphaMaskVertShaderPath = SHADERDIR_ "shaderMaterial.vert.spv";
 		constexpr char const* kAlphaMaskFragShaderPath = SHADERDIR_ "shaderAlphaMask.frag.spv";
 		constexpr char const* kMaterialVertShaderPath = SHADERDIR_ "shaderMaterial.vert.spv";
-		constexpr char const* kMaterialFragShaderPath = SHADERDIR_ "shaderMaterial.frag.spv";
+		constexpr char const* kMaterialFragShaderPath = SHADERDIR_ "shaderMaterial.frag.spv";*/
 		constexpr char const* kRenderPassAVertShaderPath = SHADERDIR_ "renderPassA.vert.spv";
 		constexpr char const* kRenderPassAFragShaderPath = SHADERDIR_ "renderPassA.frag.spv";
 		constexpr char const* kRenderPassBVertShaderPath = SHADERDIR_ "renderPassB.vert.spv";
 		constexpr char const* kRenderPassBFragShaderPath = SHADERDIR_ "renderPassB.frag.spv";
-		constexpr char const* bakedModelPath = ASSETSDIR_ "ship.comp5822mesh";
-		constexpr char const* r1ImagePath = ASSETSDIR_ "ship-tex/r1.png";
-		constexpr char const* rgbaImagePath = ASSETSDIR_ "ship-tex/rgba1111.png";
+		constexpr char const* bakedModelPath = ASSETSDIR_ "suntemple.comp5822mesh";
 #		undef SHADERDIR_
 #		undef ASSETSDIR_
 
@@ -95,7 +93,7 @@ namespace
 		constexpr float kCameraMouseSensitivity = 0.01f;
 
 		glm::vec3 gLightPosition(0.0f, 10.0f, 0.0f);
-		glm::vec3 gLightColor(1.0f, 1.0f, 1.0f);
+		glm::vec3 gLightColor(10.0f, 10.0f, 10.0f);
 		float gLightOrbitSpeed;
 		bool glightMoving = false;
 		glm::vec3 gMoveDirection(-1.0f, 0.0f, 0.0f);
@@ -167,7 +165,8 @@ namespace
 	void create_swapchain_framebuffers(
 		lut::VulkanWindow const&,
 		VkRenderPass,
-		std::vector<lut::Framebuffer>&
+		std::vector<lut::Framebuffer>&,
+		VkImageView aDepthView
 	);
 
 	void update_scene_uniforms(
@@ -189,19 +188,15 @@ namespace
 			lut::Buffer tangents;
 			lut::Buffer indices;
 		};
-
+		
+		std::string extractFilename(const std::string& path);
+		bool pathExists(const std::string& path, const std::vector<std::string>& paths);
+		int create_data_buffers(lut::VulkanContext const& aContext,
+			lut::Allocator const& aAllocator,
+			BakedModel& bakedModel,
+			std::vector<BakedMeshBuffers>& meshBuffers);
 
 		lut::DescriptorSetLayout create_material_descriptor_layout(lut::VulkanWindow const& aWindow);
-		int create_material_descriptor_sets(
-			lut::VulkanContext const& aContext,
-			VkDescriptorPool aPool,
-			VkDescriptorSetLayout const& aMaterialLayout,
-			VkDescriptorSetLayout const& aMaskLayout,
-			std::vector<BakedMaterialInfo> const& aMaterials,
-			std::vector<lut::ImageView> const& aImageViews,
-			lut::Sampler const& aSampler,
-			std::vector<VkDescriptorSet>& descriptorSetVector,
-			lut::ImageView const& dummyImageView);
 	}
 
 	namespace cw3
@@ -267,6 +262,35 @@ namespace
 		);
 	}
 
+	namespace cw4
+	{
+		lut::PipelineLayout create_final_pipeline_layout(lut::VulkanContext const& aContext,
+			VkDescriptorSetLayout aSceneLayout,
+			VkDescriptorSetLayout aMaterialTexLayout);
+
+		void record_commands_B(VkCommandBuffer aCmdBuff, VkRenderPass aRenderPass,
+			VkFramebuffer aFramebuffer, VkPipeline aGraphicsPipe, VkPipelineLayout aGraphicsLayout,
+			VkExtent2D const& aImageExtent,
+			VkBuffer aSceneUBO,
+			glsl::SceneUniform const& aSceneUniform,
+			VkDescriptorSet aSceneDescriptors,
+			std::vector<VkDescriptorSet>& aMaterialDescriptors,
+			std::vector<cw2::BakedMeshBuffers>& materialBuffers,
+			BakedModel const& aBakedModel
+		);
+
+		void submit_commands_B(lut::VulkanWindow const& aWindow, VkCommandBuffer aCmdBuff, VkFence aFence, VkSemaphore aWaitSemaphore, VkSemaphore aSignalSemaphore);
+
+		int create_material_descriptor_sets(
+			lut::VulkanContext const& aContext,
+			VkDescriptorPool aPool,
+			VkDescriptorSetLayout const& aMaterialLayout,
+			std::vector<BakedMaterialInfo> const& aMaterials,
+			std::vector<lut::ImageView> const& aImageViews,
+			lut::Sampler const& aSampler,
+			std::vector<VkDescriptorSet>& descriptorSetVector,
+			lut::ImageView const& dummyImageView);
+	}
 }
 
 int main() try
@@ -287,24 +311,24 @@ int main() try
 	lut::Allocator allocator = lut::create_allocator(window);
 
 	// Intialize resources
+	//shadow geometry pass
 	lut::RenderPass renderPassA = cw3::create_render_pass_A(window);
+	//geometry pass and final pass
 	lut::RenderPass renderPassB = cw3::create_render_pass_B(window);
 
 	// create scene descriptor set layout
 	lut::DescriptorSetLayout sceneLayout = create_scene_descriptor_layout(window);
 	// create material descriptor set layout
 	lut::DescriptorSetLayout materialLayout = cw2::create_material_descriptor_layout(window);
-	// create uniform material layout
-	lut::DescriptorSetLayout materialColorLayout = cw3::create_material_uniform_descriptor_layout(window);
 	// create intermediate texture layout
-	lut::DescriptorSetLayout interTexLayout = cw3::create_intermediate_texture_descriptor_layout(window);
+	//lut::DescriptorSetLayout interTexLayout = cw3::create_intermediate_texture_descriptor_layout(window);
 
 	//used for render pass A
-	lut::PipelineLayout geometryLayout = cw3::create_pipeline_layout_A(window, sceneLayout.handle, materialLayout.handle, materialColorLayout.handle);
-	lut::Pipeline geometryPassPipe = cw3::create_pipeline_A(window, renderPassA.handle, geometryLayout.handle);
+	//lut::PipelineLayout geometryLayout = cw3::create_pipeline_layout_A(window, sceneLayout.handle, materialLayout.handle, materialColorLayout.handle);
+	//lut::Pipeline geometryPassPipe = cw3::create_pipeline_A(window, renderPassA.handle, geometryLayout.handle);
 
 	//used for render pass B
-	lut::PipelineLayout fullscreenLayout = cw3::create_fullscreen_pipeline_layout(window, sceneLayout.handle, interTexLayout.handle);
+	lut::PipelineLayout fullscreenLayout = cw3::create_fullscreen_pipeline_layout(window, sceneLayout.handle, materialLayout.handle);
 	lut::Pipeline fullscreenPipe = cw3::create_fullscreen_pipeline(window, renderPassB.handle, fullscreenLayout.handle);
 
 	auto [depthBuffer, depthBufferView] = create_depth_buffer(window, allocator);
@@ -315,7 +339,7 @@ int main() try
 	lut::Framebuffer framebufferA = cw3::create_geometry_framebuffers(window, renderPassA.handle, depthBufferView.handle, framebufferImageViews);
 
 	std::vector<lut::Framebuffer> framebuffersB;
-	create_swapchain_framebuffers(window, renderPassB.handle, framebuffersB);
+	create_swapchain_framebuffers(window, renderPassB.handle, framebuffersB, depthBufferView.handle);
 
 	// --------------------------------- CW3 ---------------------------------
 
@@ -377,76 +401,103 @@ int main() try
 	//TODO- (Section 4) create default texture sampler
 	lut::Sampler defaultSampler = lut::create_default_sampler(window);
 
-	//------------------------------- CW3 ----------------------------------------------
+	//------------------------------- CW4 ----------------------------------------------
 	//CWK3 variables
 	std::vector<lut::Image> textureImages;
 	std::vector<lut::ImageView> textureImageViews;
 	std::vector<cw2::BakedMeshBuffers> bakedMeshBuffers;
 	std::vector<VkDescriptorSet> materialTextureDescriptors;
-	std::vector<VkDescriptorSet> materialColorDescriptors;
 	std::vector<cw3::MaterialColorUniform> materialColorUniforms{};
-	std::vector<lut::Buffer> materialUBOs{};
-	lut::Image dummyR, dummyRGBA;
-	lut::ImageView dummyRImageView, dummyRGBAImageView;
+	lut::Image dummyImage;
+	lut::ImageView dummyImageView;
 
 	//loading data
 	BakedModel bakedModel = load_baked_model(cfg::bakedModelPath);
 	materialTextureDescriptors.resize(bakedModel.materials.size());
-	materialColorDescriptors.resize(bakedModel.materials.size());
-	materialUBOs.resize(bakedModel.materials.size());
+	std::vector<std::string> alphaMaskTexturePaths{};
+	std::vector<std::string> normalMapTexturePaths{};
 
+	//testing materials
+	{
+		std::ofstream testMaterials("../testMaterials.txt");
+		for (std::size_t i = 0; i < bakedModel.materials.size(); i++)
+		{
+			testMaterials << " ---------------------------------- START OF MATERIAL " << i << "----------------------------------" << std::endl;
+			testMaterials << "Base color texture " << bakedModel.materials[i].baseColorTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].baseColorTextureId].path << std::endl;
+			testMaterials << "Rougness texture " << bakedModel.materials[i].roughnessTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].roughnessTextureId].path << std::endl;
+			testMaterials << "Metalness texture " << bakedModel.materials[i].metalnessTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].metalnessTextureId].path << std::endl;
+			testMaterials << "Alpha mask texture " << bakedModel.materials[i].alphaMaskTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].alphaMaskTextureId].path << std::endl;
+			testMaterials << "Normal map texture " << bakedModel.materials[i].normalMapTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].normalMapTextureId].path << std::endl;
+		}
+		testMaterials.close();
+	}
+	
 	for (std::size_t i = 0; i < bakedModel.materials.size(); i++)
 	{
-		materialUBOs[i] = lut::create_buffer(
-			allocator,
-			sizeof(cw3::MaterialColorUniform),
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-			VMA_MEMORY_USAGE_GPU_ONLY
-		);
+		if (bakedModel.materials[i].alphaMaskTextureId != 0xffffffff)
+		{
+			alphaMaskTexturePaths.push_back(bakedModel.textures[bakedModel.materials[i].alphaMaskTextureId].path);
+		}
+		if (bakedModel.materials[i].normalMapTextureId != 0xffffffff)
+		{
+			normalMapTexturePaths.push_back(bakedModel.textures[bakedModel.materials[i].normalMapTextureId].path);
+		}
 	}
 
-	//upload mesh data -- same for cw3
+	//upload mesh data -- same for cw3 and cw4?
 	cw2::create_data_buffers(window, allocator, bakedModel, bakedMeshBuffers);
 
+	//create textureImages and ImageViews
+	for (std::size_t i = 0; i < bakedModel.textures.size(); i++)
 	{
-		//create dummy 1 channel texture
-		{
-			lut::CommandPool loadCmdPool = lut::create_command_pool(
-				window, VK_COMMAND_POOL_CREATE_TRANSIENT_BIT);
+		lut::CommandPool loadCmdPool = lut::create_command_pool(
+			window, VK_COMMAND_POOL_CREATE_TRANSIENT_BIT);
+		std::string filename = cw2::extractFilename(bakedModel.textures[i].path);
 
-			dummyR = lut::load_image_texture2d(cfg::r1ImagePath,
+
+		if (filename[0] == 'r' ||
+			filename[0] == 'm' ||
+			cw2::pathExists(bakedModel.textures[i].path, alphaMaskTexturePaths) == true ||
+			cw2::pathExists(bakedModel.textures[i].path, normalMapTexturePaths) == true)
+		{
+			lut::Image img = lut::load_image_texture2d(
+				bakedModel.textures[i].path.c_str(),
 				window,
 				loadCmdPool.handle,
 				allocator,
 				VK_FORMAT_R8G8B8A8_UNORM);
+			textureImages.push_back(std::move(img));
+
+			lut::ImageView imgView = lut::create_image_view_texture2D(window,
+				textureImages[i].image,
+				VK_FORMAT_R8G8B8A8_UNORM);
+			textureImageViews.push_back(std::move(imgView));
 		}
-		dummyRImageView = lut::create_image_view_texture2D(window,
-			dummyR.image,
-			VK_FORMAT_R8G8B8A8_UNORM);
-
-		//create dummy RGBA texture
-		{
-			lut::CommandPool loadCmdPool = lut::create_command_pool(
-				window, VK_COMMAND_POOL_CREATE_TRANSIENT_BIT);
-
-			dummyR = lut::load_image_texture2d(cfg::rgbaImagePath,
+		else
+		{ //base color
+			lut::Image img = lut::load_image_texture2d(
+				bakedModel.textures[i].path.c_str(),
 				window,
 				loadCmdPool.handle,
 				allocator,
 				VK_FORMAT_R8G8B8A8_SRGB);
+			textureImages.push_back(std::move(img));
+
+			lut::ImageView imgView = lut::create_image_view_texture2D(window,
+				textureImages[i].image,
+				VK_FORMAT_R8G8B8A8_SRGB);
+			textureImageViews.push_back(std::move(imgView));
 		}
-		dummyRImageView = lut::create_image_view_texture2D(window,
-			dummyR.image,
-			VK_FORMAT_R8G8B8A8_SRGB);
+
 	}
 
 	//create 1 descriptor set per material texture ( 3 image views in 1 descriptor set)
-	/*cw2::create_material_descriptor_sets(window, dpool.handle, materialLayout.handle, alphaLayout.handle,
-		bakedModel.materials, textureImageViews, defaultSampler, materialDescriptors, dummyImageView);*/
+	cw4::create_material_descriptor_sets(window, dpool.handle, materialLayout.handle,
+		bakedModel.materials, textureImageViews, defaultSampler, materialTextureDescriptors, dummyImageView);
 
-	VkDescriptorSet intermediateTextureDescriptor{};
+	/*VkDescriptorSet intermediateTextureDescriptor{};
 	intermediateTextureDescriptor = cw3::create_intermediate_texture_descriptor_set(
-		window, dpool.handle, interTexLayout.handle, framebufferImageViews, depthBufferView, defaultSampler);
+		window, dpool.handle, interTexLayout.handle, framebufferImageViews, depthBufferView, defaultSampler);*/
 
 	//------------------------------- CW3 - end ----------------------------------------------
 	// Application main loop
@@ -478,11 +529,11 @@ int main() try
 			}
 
 			framebuffersB.clear();
-			create_swapchain_framebuffers(window, renderPassB.handle, framebuffersB);
+			create_swapchain_framebuffers(window, renderPassB.handle, framebuffersB, depthBufferView.handle);
 			framebufferA = cw3::create_geometry_framebuffers(window, renderPassA.handle, depthBufferView.handle, framebufferImageViews);
 			if (changes.changedSize)
 			{
-				geometryPassPipe = cw3::create_pipeline_A(window, renderPassA.handle, geometryLayout.handle);
+				//geometryPassPipe = cw3::create_pipeline_A(window, renderPassA.handle, geometryLayout.handle);
 				fullscreenPipe = cw3::create_fullscreen_pipeline(window, renderPassB.handle, fullscreenLayout.handle);
 			}
 			recreateSwapchain = false;
@@ -518,7 +569,7 @@ int main() try
 		}
 		assert(std::size_t(imageIndex) < cbfences_B.size());
 		//wait for fence for command buffer A
-		if (auto const res = vkWaitForFences(window.device,
+		/*if (auto const res = vkWaitForFences(window.device,
 			1,
 			&cbfences_A[0].handle,
 			VK_TRUE,
@@ -540,7 +591,7 @@ int main() try
 				"vkResetFences() returned %s",
 				0,
 				lut::to_string(res).c_str());
-		}
+		}*/
 		// wait for command buffer B to be available
 		if (auto const res = vkWaitForFences(window.device,
 			1,
@@ -583,10 +634,10 @@ int main() try
 		assert(std::size_t(imageIndex) < framebuffersB.size());
 
 		//render pass A record commands
-		cw3::record_commands_A(cbuffers_A[0], renderPassA.handle, framebufferA.handle, geometryPassPipe.handle, geometryLayout.handle, window.swapchainExtent,
+		/*cw3::record_commands_A(cbuffers_A[0], renderPassA.handle, framebufferA.handle, geometryPassPipe.handle, geometryLayout.handle, window.swapchainExtent,
 			sceneUBO.buffer, materialUBOs, sceneUniforms, materialColorUniforms, sceneDescriptors, materialTextureDescriptors,
 			materialColorDescriptors, bakedMeshBuffers, bakedModel
-		);
+		); 
 
 		cw3::record_commands_B(
 			cbuffers_B[imageIndex],
@@ -618,7 +669,13 @@ int main() try
 			imageAvailable.handle,
 			renderAFinished.handle,
 			renderBFinished.handle
-		);
+		);*/
+
+		cw4::record_commands_B(cbuffers_B[imageIndex], renderPassB.handle, framebuffersB[imageIndex].handle,
+			fullscreenPipe.handle, fullscreenLayout.handle,
+			window.swapchainExtent, sceneUBO.buffer, sceneUniforms, sceneDescriptors, materialTextureDescriptors, bakedMeshBuffers, bakedModel);
+
+		cw4::submit_commands_B(window, cbuffers_B[imageIndex], cbfences_B[imageIndex].handle, imageAvailable.handle, renderBFinished.handle);
 
 
 		//TODO- (Section 1)  - present rendered images (note: use the present_results() method)
@@ -864,7 +921,25 @@ namespace
 
 	namespace cw2
 	{
+		std::string extractFilename(const std::string& path)
+		{
+			std::size_t position = path.find_last_of("/\\");
+			return (position != std::string::npos) ? path.substr(position + 1) : path;
+		}
 
+		bool pathExists(const std::string& path, const std::vector<std::string>& paths)
+		{
+			bool ok = false;
+			for (std::size_t i = 0; i < paths.size(); i++)
+			{
+				if (path == paths[i])
+				{
+					ok = true;
+					break;
+				}
+			}
+			return ok;
+		}
 
 		lut::DescriptorSetLayout create_material_descriptor_layout(lut::VulkanWindow const& aWindow)
 		{
@@ -918,184 +993,6 @@ namespace
 
 			return lut::DescriptorSetLayout(aWindow.device, layout);
 		}
-
-		int create_material_descriptor_sets(
-			lut::VulkanContext const& aContext,
-			VkDescriptorPool aPool,
-			VkDescriptorSetLayout const& aMaterialLayout,
-			VkDescriptorSetLayout const& aMaskLayout,
-			std::vector<BakedMaterialInfo> const& aMaterials,
-			std::vector<lut::ImageView> const& aImageViews,
-			lut::Sampler const& aSampler,
-			std::vector<VkDescriptorSet>& descriptorSetVector,
-			lut::ImageView const& dummyImageView)
-		{
-			int index = 0;
-
-			for (BakedMaterialInfo const& material : aMaterials)
-			{
-				if (material.alphaMaskTextureId == 0xffffffff)
-				{
-					VkDescriptorSet descSet = lut::alloc_desc_set(aContext, aPool,
-						aMaterialLayout);
-					VkWriteDescriptorSet descW[4]{};
-					VkDescriptorImageInfo colorTextureInfo{};
-					VkDescriptorImageInfo roughnessTextureInfo{};
-					VkDescriptorImageInfo metalTextureInfo{};
-					VkDescriptorImageInfo normalMapTextureInfo{};
-
-					// Base color texture
-					colorTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					colorTextureInfo.sampler = aSampler.handle;
-					colorTextureInfo.imageView = aImageViews[material.baseColorTextureId].handle;
-					descW[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					descW[0].dstSet = descSet;
-					descW[0].dstBinding = 0;
-					descW[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					descW[0].descriptorCount = 1;
-					descW[0].pImageInfo = &colorTextureInfo;
-
-					// Roughness texture
-					roughnessTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					roughnessTextureInfo.sampler = aSampler.handle;
-					roughnessTextureInfo.imageView = aImageViews[material.roughnessTextureId].handle;
-					descW[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					descW[1].dstSet = descSet;
-					descW[1].dstBinding = 1;
-					descW[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					descW[1].descriptorCount = 1;
-					descW[1].pImageInfo = &roughnessTextureInfo;
-
-					// Metal texture
-					metalTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					metalTextureInfo.sampler = aSampler.handle;
-					metalTextureInfo.imageView = aImageViews[material.metalnessTextureId].handle;
-					descW[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					descW[2].dstSet = descSet;
-					descW[2].dstBinding = 2;
-					descW[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					descW[2].descriptorCount = 1;
-					descW[2].pImageInfo = &metalTextureInfo;
-
-					// Normal map texture
-					if (material.normalMapTextureId != 0xffffffff)
-					{
-						normalMapTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-						normalMapTextureInfo.sampler = aSampler.handle;
-						normalMapTextureInfo.imageView = aImageViews[material.normalMapTextureId].handle;
-						descW[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-						descW[3].dstSet = descSet;
-						descW[3].dstBinding = 3;
-						descW[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-						descW[3].descriptorCount = 1;
-						descW[3].pImageInfo = &normalMapTextureInfo;
-					}
-					else
-					{
-						normalMapTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-						normalMapTextureInfo.sampler = aSampler.handle;
-						normalMapTextureInfo.imageView = dummyImageView.handle;
-						descW[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-						descW[3].dstSet = descSet;
-						descW[3].dstBinding = 3;
-						descW[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-						descW[3].descriptorCount = 1;
-						descW[3].pImageInfo = &normalMapTextureInfo;
-					}
-
-
-					auto numSets = sizeof(descW) / sizeof(descW[0]);
-					vkUpdateDescriptorSets(aContext.device, numSets, descW, 0, nullptr);
-					descriptorSetVector[index] = descSet;
-				}
-				else
-				{
-					VkDescriptorSet descSet = lut::alloc_desc_set(aContext, aPool,
-						aMaskLayout);
-					VkWriteDescriptorSet descW[5]{};
-					VkDescriptorImageInfo colorTextureInfo{};
-					VkDescriptorImageInfo roughnessTextureInfo{};
-					VkDescriptorImageInfo metalTextureInfo{};
-					VkDescriptorImageInfo alphaTextureInfo{};
-					VkDescriptorImageInfo normalMapTextureInfo{};
-
-					// Base color texture
-					colorTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					colorTextureInfo.sampler = aSampler.handle;
-					colorTextureInfo.imageView = aImageViews[material.baseColorTextureId].handle;
-					descW[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					descW[0].dstSet = descSet;
-					descW[0].dstBinding = 0;
-					descW[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					descW[0].descriptorCount = 1;
-					descW[0].pImageInfo = &colorTextureInfo;
-
-					// Roughness texture
-					roughnessTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					roughnessTextureInfo.sampler = aSampler.handle;
-					roughnessTextureInfo.imageView = aImageViews[material.roughnessTextureId].handle;
-					descW[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					descW[1].dstSet = descSet;
-					descW[1].dstBinding = 1;
-					descW[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					descW[1].descriptorCount = 1;
-					descW[1].pImageInfo = &roughnessTextureInfo;
-
-					// Metal texture
-					metalTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					metalTextureInfo.sampler = aSampler.handle;
-					metalTextureInfo.imageView = aImageViews[material.metalnessTextureId].handle;
-					descW[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					descW[2].dstSet = descSet;
-					descW[2].dstBinding = 2;
-					descW[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					descW[2].descriptorCount = 1;
-					descW[2].pImageInfo = &metalTextureInfo;
-
-					alphaTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					alphaTextureInfo.sampler = aSampler.handle;
-					alphaTextureInfo.imageView = aImageViews[material.alphaMaskTextureId].handle;
-					descW[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					descW[3].dstSet = descSet;
-					descW[3].dstBinding = 3;
-					descW[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					descW[3].descriptorCount = 1;
-					descW[3].pImageInfo = &alphaTextureInfo;
-
-					if (material.normalMapTextureId != 0xffffffff)
-					{
-						normalMapTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-						normalMapTextureInfo.sampler = aSampler.handle;
-						normalMapTextureInfo.imageView = aImageViews[material.normalMapTextureId].handle;
-						descW[4].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-						descW[4].dstSet = descSet;
-						descW[4].dstBinding = 4;
-						descW[4].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-						descW[4].descriptorCount = 1;
-						descW[4].pImageInfo = &normalMapTextureInfo;
-					}
-					else
-					{
-						normalMapTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-						normalMapTextureInfo.sampler = aSampler.handle;
-						normalMapTextureInfo.imageView = dummyImageView.handle;
-						descW[4].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-						descW[4].dstSet = descSet;
-						descW[4].dstBinding = 4;
-						descW[4].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-						descW[4].descriptorCount = 1;
-						descW[4].pImageInfo = &normalMapTextureInfo;
-					}
-
-					auto numSets = sizeof(descW) / sizeof(descW[0]);
-					vkUpdateDescriptorSets(aContext.device, numSets, descW, 0, nullptr);
-					descriptorSetVector[index] = descSet;
-				}
-				index++;
-			}
-			return 1;
-		}
-
 
 		int create_data_buffers(lut::VulkanContext const& aContext,
 			lut::Allocator const& aAllocator,
@@ -1497,7 +1394,7 @@ namespace
 
 		lut::RenderPass create_render_pass_B(lut::VulkanWindow const& aWindow)
 		{
-			VkAttachmentDescription attachments[1]{};
+			VkAttachmentDescription attachments[2]{};
 			attachments[0].format = aWindow.swapchainFormat;
 			attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
 			attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -1505,32 +1402,46 @@ namespace
 			attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+			attachments[1].format = cfg::kDepthFormat;
+			attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
+			attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
 			VkAttachmentReference subpassAttachments[1]{};
 			subpassAttachments[0].attachment = 0;
 			subpassAttachments[0].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+			VkAttachmentReference depthAttachment{};
+			depthAttachment.attachment = 1;
+			depthAttachment.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 			VkSubpassDescription subpasses[1]{};
 			subpasses[0].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 			subpasses[0].colorAttachmentCount = 1;
 			subpasses[0].pColorAttachments = subpassAttachments;
+			subpasses[0].pDepthStencilAttachment = &depthAttachment;
 
 			//Subpass dependencies
-			VkSubpassDependency dependency[1]{};
-			dependency[0].srcSubpass = VK_SUBPASS_EXTERNAL;
-			dependency[0].dstSubpass = 0;
-			dependency[0].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-			dependency[0].srcAccessMask = 0;
-			dependency[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-			dependency[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			//VkSubpassDependency dependency[1]{};
+			//dependency[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+			//dependency[0].dstSubpass = 0;
+			//dependency[0].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			//dependency[0].srcAccessMask = 0;
+			//dependency[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			//dependency[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
 			VkRenderPassCreateInfo passInfo{};
 			passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-			passInfo.attachmentCount = 1;
+			passInfo.attachmentCount = 2;
 			passInfo.pAttachments = attachments;
 			passInfo.subpassCount = 1;
 			passInfo.pSubpasses = subpasses;
-			passInfo.dependencyCount = 1;
-			passInfo.pDependencies = dependency;
+			passInfo.dependencyCount = 0;
+			passInfo.pDependencies = nullptr;
+			/*passInfo.dependencyCount = 1;
+			passInfo.pDependencies = dependency;*/
 
 			std::cout << "Creating render pass B" << std::endl;
 			VkRenderPass rpass = VK_NULL_HANDLE;
@@ -1801,8 +1712,50 @@ namespace
 			stages[1].module = frag.handle;
 			stages[1].pName = "main";
 
+			VkVertexInputBindingDescription vertexInputs[4]{};
+			vertexInputs[0].binding = 0; //position
+			vertexInputs[0].stride = sizeof(float) * 3; //Changed for 3D
+			vertexInputs[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			vertexInputs[1].binding = 1; //normals
+			vertexInputs[1].stride = sizeof(float) * 3;
+			vertexInputs[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			vertexInputs[2].binding = 2; //texcoords
+			vertexInputs[2].stride = sizeof(float) * 2;
+			vertexInputs[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			vertexInputs[3].binding = 3; //tangents
+			vertexInputs[3].stride = sizeof(float) * 4;
+			vertexInputs[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			VkVertexInputAttributeDescription vertexAttributes[4]{};
+			vertexAttributes[0].binding = 0;
+			vertexAttributes[0].location = 0;
+			vertexAttributes[0].format = VK_FORMAT_R32G32B32_SFLOAT; //changed
+			vertexAttributes[0].offset = 0;
+
+			vertexAttributes[1].binding = 1;
+			vertexAttributes[1].location = 1;
+			vertexAttributes[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+			vertexAttributes[1].offset = 0;
+
+			vertexAttributes[2].binding = 2;
+			vertexAttributes[2].location = 2;
+			vertexAttributes[2].format = VK_FORMAT_R32G32_SFLOAT;
+			vertexAttributes[2].offset = 0;
+
+			vertexAttributes[3].binding = 3;
+			vertexAttributes[3].location = 3;
+			vertexAttributes[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+			vertexAttributes[3].offset = 0;
+
 			VkPipelineVertexInputStateCreateInfo inputInfo{};
 			inputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+			inputInfo.vertexBindingDescriptionCount = 4; //number of vertexInputs above;
+			inputInfo.pVertexBindingDescriptions = vertexInputs;
+			inputInfo.vertexAttributeDescriptionCount = 4;
+			inputInfo.pVertexAttributeDescriptions = vertexAttributes;
 
 			//Define which primitive the input is
 			//assembled into for rasterization
@@ -1829,8 +1782,11 @@ namespace
 			//DEPTH test disabled for second render pass
 			VkPipelineDepthStencilStateCreateInfo depthInfo{};
 			depthInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-			depthInfo.depthTestEnable = VK_FALSE;
-			depthInfo.depthWriteEnable = VK_FALSE;
+			depthInfo.depthTestEnable = VK_TRUE;
+			depthInfo.depthWriteEnable = VK_TRUE;
+			depthInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+			depthInfo.minDepthBounds = 0.f;
+			depthInfo.maxDepthBounds = 1.f;
 
 			VkPipelineViewportStateCreateInfo viewportInfo{};
 			viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -2553,29 +2509,279 @@ namespace
 
 
 	}
+
+	namespace cw4
+	{
+		lut::PipelineLayout create_final_pipeline_layout(lut::VulkanContext const& aContext,
+			VkDescriptorSetLayout aSceneLayout,
+			VkDescriptorSetLayout aMaterialTexLayout)
+		{
+			VkDescriptorSetLayout layouts[] = {
+				//Order must match the set = N in the shaders
+				aSceneLayout, //set 0
+				aMaterialTexLayout // set 1
+			};
+
+			VkPipelineLayoutCreateInfo layoutInfo{};
+			layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+			layoutInfo.setLayoutCount = sizeof(layouts) / sizeof(layouts[0]);
+			layoutInfo.pSetLayouts = layouts;
+			layoutInfo.pushConstantRangeCount = 0;
+			layoutInfo.pPushConstantRanges = nullptr;
+
+			VkPipelineLayout layout = VK_NULL_HANDLE;
+			if (auto const res = vkCreatePipelineLayout(aContext.device, &layoutInfo, nullptr, &layout);
+				VK_SUCCESS != res)
+			{
+				throw lut::Error("Unable to create pipeline layout\n"
+					"VkCreatePipelineLayout() returned %s",
+					lut::to_string(res).c_str());
+			}
+
+			return lut::PipelineLayout(aContext.device, layout);
+		}
+
+		void record_commands_B(VkCommandBuffer aCmdBuff, VkRenderPass aRenderPass,
+			VkFramebuffer aFramebuffer, VkPipeline aGraphicsPipe, VkPipelineLayout aGraphicsLayout,
+			VkExtent2D const& aImageExtent,
+			VkBuffer aSceneUBO,
+			glsl::SceneUniform const& aSceneUniform,
+			VkDescriptorSet aSceneDescriptors,
+			std::vector<VkDescriptorSet>& aMaterialDescriptors,
+			std::vector<cw2::BakedMeshBuffers>& materialBuffers,
+			BakedModel const& aBakedModel
+		)
+		{
+			VkCommandBufferBeginInfo begInfo{};
+			begInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			begInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			begInfo.pInheritanceInfo = nullptr;
+
+			if (auto const res = vkBeginCommandBuffer(aCmdBuff, &begInfo);
+				VK_SUCCESS != res)
+			{
+				throw lut::Error("Unable to begin recording command buffer\n"
+					"vkBeginCommandBuffer() returned %s",
+					lut::to_string(res).c_str());
+			}
+
+			//Upload scene uniforms
+			lut::buffer_barrier(aCmdBuff,
+				aSceneUBO,
+				VK_ACCESS_UNIFORM_READ_BIT,
+				VK_ACCESS_TRANSFER_WRITE_BIT,
+				VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+				VK_PIPELINE_STAGE_TRANSFER_BIT);
+
+			vkCmdUpdateBuffer(aCmdBuff,
+				aSceneUBO, 0,
+				sizeof(glsl::SceneUniform),
+				&aSceneUniform);
+
+			lut::buffer_barrier(aCmdBuff,
+				aSceneUBO,
+				VK_ACCESS_TRANSFER_WRITE_BIT,
+				VK_ACCESS_UNIFORM_READ_BIT,
+				VK_PIPELINE_STAGE_TRANSFER_BIT,
+				VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+
+			//Begin Render pass
+			VkClearValue clearValues[2]{};
+			//Clear to a dark gray background
+			clearValues[0].color.float32[0] = 0.1f;
+			clearValues[0].color.float32[1] = 0.1f;
+			clearValues[0].color.float32[2] = 0.1f;
+			clearValues[0].color.float32[3] = 1.f;
+
+			clearValues[1].depthStencil.depth = 1.f;
+
+			VkRenderPassBeginInfo passInfo{};
+			passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+			passInfo.renderPass = aRenderPass;
+			passInfo.framebuffer = aFramebuffer;
+			passInfo.renderArea.offset = VkOffset2D{ 0, 0 };
+			passInfo.renderArea.extent = aImageExtent;
+			passInfo.clearValueCount = 2;
+			passInfo.pClearValues = clearValues;
+
+			//---------BEGIN RENDERPASS------------
+			vkCmdBeginRenderPass(aCmdBuff, &passInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+			vkCmdBindPipeline(aCmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, aGraphicsPipe);
+			vkCmdBindDescriptorSets(aCmdBuff,
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				aGraphicsLayout,
+				0,
+				1,
+				&aSceneDescriptors,
+				0,
+				nullptr);
+
+			for (std::size_t i = 0; i < materialBuffers.size(); i++)
+			{
+				
+					vkCmdBindDescriptorSets(
+						aCmdBuff,
+						VK_PIPELINE_BIND_POINT_GRAPHICS,
+						aGraphicsLayout,
+						1,
+						1,
+						&aMaterialDescriptors[aBakedModel.meshes[i].materialId],
+						0,
+						nullptr
+					);
+
+					VkBuffer buffers[4] = { materialBuffers[i].positions.buffer,
+					materialBuffers[i].normals.buffer,
+					materialBuffers[i].texcoords.buffer,
+					materialBuffers[i].tangents.buffer };
+					VkDeviceSize offsets[4]{};
+
+					vkCmdBindVertexBuffers(aCmdBuff, 0, 4, buffers, offsets);
+					vkCmdBindIndexBuffer(aCmdBuff, materialBuffers[i].indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+
+					vkCmdDrawIndexed(aCmdBuff, aBakedModel.meshes[i].indices.size(), 1, 0, 0, 0);
+				
+			}
+
+			//End the render pass
+			vkCmdEndRenderPass(aCmdBuff);
+
+			//End command recording
+			if (auto const res = vkEndCommandBuffer(aCmdBuff);
+				VK_SUCCESS != res)
+			{
+				throw lut::Error("Unable to end recording command buffer\n"
+					"vkEndCommandBuffer() returned %s",
+					lut::to_string(res).c_str());
+			}
+		}
+
+		void submit_commands_B(lut::VulkanWindow const& aWindow, VkCommandBuffer aCmdBuff, VkFence aFence, VkSemaphore aWaitSemaphore, VkSemaphore aSignalSemaphore)
+		{
+			VkPipelineStageFlags waitPipelineStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+			VkSubmitInfo submitInfo{};
+			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			submitInfo.commandBufferCount = 1;
+			submitInfo.pCommandBuffers = &aCmdBuff;
+
+			submitInfo.waitSemaphoreCount = 1;
+			submitInfo.pWaitSemaphores = &aWaitSemaphore;
+			submitInfo.pWaitDstStageMask = &waitPipelineStages;
+
+			submitInfo.signalSemaphoreCount = 1;
+			submitInfo.pSignalSemaphores = &aSignalSemaphore;
+
+			if (auto const res = vkQueueSubmit(aWindow.graphicsQueue, 1, &submitInfo, aFence);
+				VK_SUCCESS != res)
+			{
+				throw lut::Error("Unable to submit command buffer to queue\n"
+					"vkQueueSubmit() returned %s",
+					lut::to_string(res).c_str());
+			}
+		}
+
+		int create_material_descriptor_sets(
+			lut::VulkanContext const& aContext,
+			VkDescriptorPool aPool,
+			VkDescriptorSetLayout const& aMaterialLayout,
+			std::vector<BakedMaterialInfo> const& aMaterials,
+			std::vector<lut::ImageView> const& aImageViews,
+			lut::Sampler const& aSampler,
+			std::vector<VkDescriptorSet>& descriptorSetVector,
+			lut::ImageView const& dummyImageView)
+		{
+			int index = 0;
+
+			for (BakedMaterialInfo const& material : aMaterials)
+			{
+				VkDescriptorSet descSet = lut::alloc_desc_set(aContext, aPool,
+					aMaterialLayout);
+				VkWriteDescriptorSet descW[4]{};
+				VkDescriptorImageInfo colorTextureInfo{};
+				VkDescriptorImageInfo roughnessTextureInfo{};
+				VkDescriptorImageInfo metalTextureInfo{};
+				VkDescriptorImageInfo normalMapTextureInfo{};
+
+				// Base color texture
+				colorTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				colorTextureInfo.sampler = aSampler.handle;
+				colorTextureInfo.imageView = aImageViews[material.baseColorTextureId].handle;
+				descW[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				descW[0].dstSet = descSet;
+				descW[0].dstBinding = 0;
+				descW[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				descW[0].descriptorCount = 1;
+				descW[0].pImageInfo = &colorTextureInfo;
+
+				// Roughness texture
+				roughnessTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				roughnessTextureInfo.sampler = aSampler.handle;
+				roughnessTextureInfo.imageView = aImageViews[material.roughnessTextureId].handle;
+				descW[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				descW[1].dstSet = descSet;
+				descW[1].dstBinding = 1;
+				descW[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				descW[1].descriptorCount = 1;
+				descW[1].pImageInfo = &roughnessTextureInfo;
+
+				// Metal texture
+				metalTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				metalTextureInfo.sampler = aSampler.handle;
+				metalTextureInfo.imageView = aImageViews[material.metalnessTextureId].handle;
+				descW[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				descW[2].dstSet = descSet;
+				descW[2].dstBinding = 2;
+				descW[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				descW[2].descriptorCount = 1;
+				descW[2].pImageInfo = &metalTextureInfo;
+
+				// Normal map texture
+				normalMapTextureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				normalMapTextureInfo.sampler = aSampler.handle;
+				normalMapTextureInfo.imageView = aImageViews[material.normalMapTextureId].handle;
+				descW[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				descW[3].dstSet = descSet;
+				descW[3].dstBinding = 3;
+				descW[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				descW[3].descriptorCount = 1;
+				descW[3].pImageInfo = &normalMapTextureInfo;
+				
+				auto numSets = sizeof(descW) / sizeof(descW[0]);
+				vkUpdateDescriptorSets(aContext.device, numSets, descW, 0, nullptr);
+				descriptorSetVector[index] = descSet;
+				
+				index++;
+			}
+			return 1;
+		}
+
+	}
 }
 
 namespace
 {
 
-
 	void create_swapchain_framebuffers(lut::VulkanWindow const& aWindow,
 		VkRenderPass aRenderPass,
-		std::vector<lut::Framebuffer>& aFramebuffers)
+		std::vector<lut::Framebuffer>& aFramebuffers,
+		VkImageView aDepthView)
 	{
 		assert(aFramebuffers.empty());
-		//no depth buffer for render pass B?
+
 		for (std::size_t i = 0; i < aWindow.swapViews.size(); ++i)
 		{
-			VkImageView attachments[1] = {
+			VkImageView attachments[2] = {
 				aWindow.swapViews[i],
+				aDepthView
 			};
 
 			VkFramebufferCreateInfo fbInfo{};
 			fbInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			fbInfo.flags = 0;
 			fbInfo.renderPass = aRenderPass;
-			fbInfo.attachmentCount = 1;
+			fbInfo.attachmentCount = 2;
 			fbInfo.pAttachments = attachments;
 			fbInfo.width = aWindow.swapchainExtent.width;
 			fbInfo.height = aWindow.swapchainExtent.height;

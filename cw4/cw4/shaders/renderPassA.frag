@@ -24,15 +24,6 @@ layout (set = 1, binding = 1) uniform sampler2D uTexRoughnessColor;
 layout (set = 1, binding = 2) uniform sampler2D uTexMetalColor;
 layout (set = 1, binding = 3) uniform sampler2D uNormalMap;
 
-layout( set = 2, binding = 0) uniform MaterialUBO
- {
-	vec3 baseColor;
-	float roughness;
-	float metalness;
-	vec3 emissiveColor;
- } material;
-
-
  layout (location = 0) out vec4 oBaseColor;
  layout (location = 1) out vec2 oMaterialProps;
  layout (location = 2) out vec4 oEmissive;
@@ -70,13 +61,12 @@ void main()
 	vec3 halfVec = normalize(viewDir + lightDir);
 	vec3 normal = normalize(vsNormal);
 
-	vec3 baseColor = texture(uTexBaseColor, vsTexCoord).rgb * material.baseColor;
-	float roughness = texture(uTexRoughnessColor, vsTexCoord).r * material.roughness;
-	float metalness = texture(uTexMetalColor, vsTexCoord).r * material.metalness;
+	vec3 baseColor = texture(uTexBaseColor, vsTexCoord).rgb;
+	float roughness = texture(uTexRoughnessColor, vsTexCoord).r;
+	float metalness = texture(uTexMetalColor, vsTexCoord).r;
 	
 	oBaseColor = vec4(baseColor, 1.0);
 	oMaterialProps = vec2(roughness, metalness);
-	oEmissive = vec4(material.emissiveColor, 1.0);
 	oNormal = vec4(normal, 0.0);
 	
 }

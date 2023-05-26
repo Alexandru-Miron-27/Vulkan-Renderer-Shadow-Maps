@@ -142,6 +142,65 @@ catch( std::exception const& eErr )
 
 namespace
 {
+	int computeTangents(std::vector<IndexedMesh>& indexedMesh)
+	{
+		for (std::size_t index = 0; index < indexedMesh.size(); index++)
+		{
+			std::vector<tgen::VIndexT> triIndices{};
+			std::vector<tgen::RealT> positions3D{};
+			std::vector<tgen::RealT> uvs2D{};
+			std::vector<tgen::RealT> cTangents3D{};
+			std::vector<tgen::RealT> cBitangents3D{};
+			std::vector<tgen::RealT> normals3D{};
+			std::vector<tgen::RealT> tangents4D{};
+
+			//creating triIndices, positions3D and uvs2D
+			for (std::size_t i = 0; i < indexedMesh[index].indices.size(); i++)
+			{
+				triIndices.push_back(static_cast<tgen::VIndexT>(indexedMesh[index].indices[i]));
+			}
+			for (std::size_t i = 0; i < indexedMesh[index].vert.size(); i++)
+			{
+				positions3D.push_back(static_cast<tgen::RealT>(indexedMesh[index].vert[i].x));
+				positions3D.push_back(static_cast<tgen::RealT>(indexedMesh[index].vert[i].y));
+				positions3D.push_back(static_cast<tgen::RealT>(indexedMesh[index].vert[i].z));
+			}
+			for (std::size_t i = 0; i < indexedMesh[index].text.size(); i++)
+			{
+				uvs2D.push_back(static_cast<tgen::RealT>(indexedMesh[index].text[i].x));
+				uvs2D.push_back(static_cast<tgen::RealT>(indexedMesh[index].text[i].y));
+			}
+			for (std::size_t i = 0; i < indexedMesh[index].norm.size(); i++)
+			{
+				normals3D.push_back(static_cast<tgen::RealT>(indexedMesh[index].norm[i].x));
+				normals3D.push_back(static_cast<tgen::RealT>(indexedMesh[index].norm[i].y));
+				normals3D.push_back(static_cast<tgen::RealT>(indexedMesh[index].norm[i].z));
+			}
+
+			tgen::computeCornerTSpace(triIndices, triIndices, positions3D, uvs2D,
+				cTangents3D, cBitangents3D);
+
+			std::vector<tgen::RealT> vTangents3D{};
+			std::vector<tgen::RealT> vBitangents3D{};
+
+			tgen::computeVertexTSpace(triIndices, cTangents3D, cBitangents3D, indexedMesh[index].text.size(),
+				vTangents3D, vBitangents3D);
+
+			tgen::orthogonalizeTSpace(normals3D, vTangents3D, vBitangents3D);
+
+			tgen::computeTangent4D(normals3D, vTangents3D, vBitangents3D, tangents4D);
+
+			for (std::size_t j = 0; j < tangents4D.size(); j = j + 4)
+			{
+				indexedMesh[index].tangent.push_back(
+					glm::vec4(tangents4D[j], tangents4D[j + 1], tangents4D[j + 2], tangents4D[j + 3]));
+			}
+		}
+		return 1;
+
+	}
+
+
 	void process_model_( char const* aOutput, char const* aInputOBJ, glm::mat4x4 const& aStaticTransform )
 	{
 		static constexpr std::size_t vertexSize = sizeof(float)*(3+3+2);
@@ -163,7 +222,7 @@ namespace
 		std::printf( " - triangle soup vertices: %zu => %zu kB\n", inputVerts, inputVerts*vertexSize/1024 );
 
 		// Index meshes
-		auto const indexed = index_meshes_( model );
+		auto indexed = index_meshes_( model );
 
 		std::size_t outputVerts = 0, outputIndices = 0;
 		for( auto const& mesh : indexed )
@@ -181,6 +240,9 @@ namespace
 
 		// Ensure output directory exists
 		std::filesystem::create_directories( rootdir );
+
+		//----------------- CW2 - Normal mapping -------------------------------
+		computeTangents(indexed);
 
 		// Output mesh data
 		auto mainpath = rootdir / basename;
@@ -375,6 +437,7 @@ namespace
 			checked_write_( aOut, sizeof(glm::vec3)*vertexCount, imesh.vert.data() );
 			checked_write_( aOut, sizeof(glm::vec3)*vertexCount, imesh.norm.data() );
 			checked_write_( aOut, sizeof(glm::vec2)*vertexCount, imesh.text.data() );
+			checked_write_(aOut, sizeof(glm::vec4) * vertexCount, imesh.tangent.data());
 
 
 			checked_write_( aOut, sizeof(std::uint32_t)*indexCount, imesh.indices.data() );
