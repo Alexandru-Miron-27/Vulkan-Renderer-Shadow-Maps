@@ -92,8 +92,8 @@ namespace
 
 		constexpr float kCameraMouseSensitivity = 0.01f;
 
-		glm::vec3 gLightPosition(0.0f, 10.0f, 0.0f);
-		glm::vec3 gLightColor(10.0f, 10.0f, 10.0f);
+		glm::vec3 gLightPosition(0.0f, 1.0f, 0.0f);
+		glm::vec3 gLightColor(1.0f, 1.0f, 1.0f);
 		float gLightOrbitSpeed;
 		bool glightMoving = false;
 		glm::vec3 gMoveDirection(-1.0f, 0.0f, 0.0f);
@@ -144,8 +144,6 @@ namespace
 			glm::mat4 camera;
 			glm::mat4 projection;
 			glm::mat4 projCam;
-			glm::mat4 inverseProjection;
-			glm::mat4 inverseCamera;
 			glm::vec3 cameraPos;
 
 			alignas(16) glm::vec3 lightPosition;
@@ -895,9 +893,9 @@ namespace
 
 		aSceneUniforms.projCam = aSceneUniforms.projection * aSceneUniforms.camera;
 
-		aSceneUniforms.inverseProjection = glm::inverse(aSceneUniforms.projection);
+		//aSceneUniforms.inverseProjection = glm::inverse(aSceneUniforms.projection);
 
-		aSceneUniforms.inverseCamera = aState.camera2world;
+		//aSceneUniforms.inverseCamera = aState.camera2world;
 
 
 		if (cfg::glightMoving == true)
@@ -914,6 +912,7 @@ namespace
 			cfg::gLightPosition = cfg::gLightPosition + cfg::gLightOrbitSpeed * cfg::gMoveDirection;
 		}
 
+		std::cout << aSceneUniforms.cameraPos.x << " " << aSceneUniforms.cameraPos.y << " " << aSceneUniforms.cameraPos.z << " " << std::endl;
 		aSceneUniforms.lightPosition = cfg::gLightPosition;
 		aSceneUniforms.lightColor = cfg::gLightColor;
 

@@ -90,6 +90,6 @@ void main()
 	vec3 Lo = 0.0 + ambientTerm + fr * uScene.lightColor
 	* max(dot(normal, lightDir), 0.0);
 
-	oColor = vec4(baseColor, 1.0);
+	oColor = vec4(Lo, 1.0);
 
 }
