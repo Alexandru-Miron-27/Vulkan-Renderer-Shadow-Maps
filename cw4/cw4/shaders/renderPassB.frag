@@ -53,6 +53,7 @@ float computeD( vec3 normal, vec3 halfVec, float shininess)
 
  float computeShadow(vec4 lightSpacePos)
  {
+ /*
 	vec4 projCoords = lightSpacePos / lightSpacePos.w;
 	projCoords.xy = projCoords.xy * 0.5 + 0.5;
 	//float bias = 0.001;
@@ -60,7 +61,32 @@ float computeD( vec3 normal, vec3 halfVec, float shininess)
 	float shadow = textureProj(uShadowMap, projCoords);
 	if (shadow < 1.0)
 		shadow = 0.2;
-    return shadow;
+		*/
+
+	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+	projCoords = projCoords * 0.5 + 0.5; // Transform to [0, 1]
+
+	// define the size of the area around the current pixel where we will sample
+	float texelSize = 1.0 / 16384.0; // assuming the shadow map is 2048x2048
+	float bias = 0.005;
+
+	float shadow = 0.0;
+	vec2 offsets[9] = vec2[](
+		vec2(-1, -1), vec2(0, -1), vec2(1, -1),
+		vec2(-1, 0), vec2(0, 0), vec2(1, 0),
+		vec2(-1, 1), vec2(0, 1), vec2(1, 1)
+	);
+
+	// calculate and average the shadow
+	for (int i = 0; i < 9; i++) {
+		float pcfDepth = textureProj(uShadowMap, vec4((projCoords.xy + offsets[i] * texelSize), projCoords.z - bias, 1.0));
+		shadow += pcfDepth * 0.5 + 0.5;
+	}
+
+	shadow /= 9.0;
+
+	return shadow;
+    
  }
 void main()
 {
