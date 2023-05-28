@@ -55,7 +55,11 @@ float computeD( vec3 normal, vec3 halfVec, float shininess)
  {
 	vec4 projCoords = lightSpacePos / lightSpacePos.w;
 	projCoords.xy = projCoords.xy * 0.5 + 0.5;
+	//float bias = 0.001;
+	//projCoords.z -= bias;
 	float shadow = textureProj(uShadowMap, projCoords);
+	if (shadow < 1.0)
+		shadow = 0.2;
     return shadow;
  }
 void main()

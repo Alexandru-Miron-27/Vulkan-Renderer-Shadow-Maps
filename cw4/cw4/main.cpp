@@ -92,8 +92,8 @@ namespace
 
 		constexpr float kCameraMouseSensitivity = 0.01f;
 
-		constexpr int shadowMapWidth = 4096;
-		constexpr int shadowMapHeight = 4096;
+		constexpr int shadowMapWidth = 16384;
+		constexpr int shadowMapHeight = 16384;
 
 		glm::vec3 gLightPosition(0.0f, 0.0f, 0.0f);
 		glm::vec3 gLightColor(1.0f, 1.0f, 1.0f);
@@ -2517,7 +2517,7 @@ namespace
 			samplerInfo.anisotropyEnable = VK_FALSE;
 			samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
 			samplerInfo.compareEnable = VK_TRUE;
-			samplerInfo.compareOp = VK_COMPARE_OP_LESS;
+			samplerInfo.compareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
 
 			VkSampler sampler = VK_NULL_HANDLE;
 			if (auto const res = vkCreateSampler(aContext.device,
