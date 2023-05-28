@@ -195,7 +195,7 @@ namespace labutils
 		//TODO: create GLFW window and the Vulkan Surface
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-		ret.window = glfwCreateWindow(1280, 720, "Exercise 3", nullptr, nullptr);
+		ret.window = glfwCreateWindow(1920, 1080, "Coursework 4", nullptr, nullptr);
 
 		if (!ret.window)
 		{

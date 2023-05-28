@@ -13,6 +13,7 @@ layout( set = 0, binding = 0) uniform UScene
 	mat4 camera;
 	mat4 projection; 
 	mat4 projCam;
+	mat4 lightSpaceMatrix;
 	vec3 cameraPos;
 
 	vec3 lightPosition;
@@ -24,10 +25,10 @@ layout (set = 1, binding = 1) uniform sampler2D uTexRoughnessColor;
 layout (set = 1, binding = 2) uniform sampler2D uTexMetalColor;
 layout (set = 1, binding = 3) uniform sampler2D uNormalMap;
 
+layout (set = 2, binding = 0) uniform sampler2D uShadowMap;
+
  const float eps = 0.0001;
  const float pi = 3.141592;
-
- float weight[22];
 
 float computeD( vec3 normal, vec3 halfVec, float shininess)
  {
@@ -50,6 +51,17 @@ float computeD( vec3 normal, vec3 halfVec, float shininess)
 	return G;
  }
 
+ float computeShadow(vec4 lightSpacePos)
+ {
+	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+	projCoords = projCoords * 0.5 + 0.5; //Transform to [0, 1]
+	float currentDepth = projCoords.z;
+
+	float shadowDepth = texture(uShadowMap, projCoords.xy).r;
+	float shadow = currentDepth > shadowDepth + 0.005 ? 0.5 : 1.0; // 0.005 is a bias to prevent shadow acne
+
+    return shadow;
+ }
 void main()
 {
 	vec3 viewDir = normalize(uScene.cameraPos - vsPos);
@@ -89,6 +101,11 @@ void main()
 	//emitted light is 0
 	vec3 Lo = 0.0 + ambientTerm + fr * uScene.lightColor
 	* max(dot(normal, lightDir), 0.0);
+
+	vec4 lightSpacePos = uScene.lightSpaceMatrix * vec4(vsPos, 1.0);
+    float shadow = computeShadow(lightSpacePos);
+
+	Lo *= shadow;
 
 	oColor = vec4(Lo, 1.0);
 

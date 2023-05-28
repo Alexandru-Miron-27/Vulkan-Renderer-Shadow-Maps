@@ -10,6 +10,7 @@ layout( set = 0, binding = 0) uniform UScene
 	mat4 camera;
 	mat4 projection; 
 	mat4 projCam;
+	mat4 lightSpaceMatrix;
 	vec3 cameraPos;
 
 	vec3 lightPosition;
