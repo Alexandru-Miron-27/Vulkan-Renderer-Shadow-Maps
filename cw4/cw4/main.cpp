@@ -92,6 +92,9 @@ namespace
 
 		constexpr float kCameraMouseSensitivity = 0.01f;
 
+		constexpr int shadowMapWidth = 4096;
+		constexpr int shadowMapHeight = 4096;
+
 		glm::vec3 gLightPosition(0.0f, 0.0f, 0.0f);
 		glm::vec3 gLightColor(1.0f, 1.0f, 1.0f);
 		float gLightOrbitSpeed;
@@ -264,6 +267,7 @@ namespace
 
 	namespace cw4
 	{
+		lut::Sampler create_shadow_sampler(lut::VulkanContext const& aContext);
 		std::tuple<lut::Image, lut::ImageView> create_shadow_map_image_view(lut::VulkanWindow const& aWindow,
 			lut::Allocator const& aAllocator);
 		lut::DescriptorSetLayout create_shadow_map_descriptor_layout(lut::VulkanWindow const& aWindow);
@@ -360,7 +364,7 @@ int main() try
 	
 	// --------------------------------- CW4 ---------------------------------
 
-	auto [shadowDepthBuffer, shadowDepthBufferView] = create_depth_buffer(window, allocator);
+	auto [shadowDepthBuffer, shadowDepthBufferView] = cw4::create_shadow_map_image_view(window, allocator);
 	lut::Framebuffer framebufferA = cw4::create_shadow_framebuffers(window, renderPassA.handle, shadowDepthBufferView.handle);
 
 	std::vector<lut::Framebuffer> framebuffersB;
@@ -425,6 +429,9 @@ int main() try
 
 	//TODO- (Section 4) create default texture sampler
 	lut::Sampler defaultSampler = lut::create_default_sampler(window);
+
+	//------------------------------- CW4 ----------------------------------------------
+	lut::Sampler shadowSampler = cw4::create_shadow_sampler(window);
 
 	//------------------------------- CW4 ----------------------------------------------
 	//CWK3 variables
@@ -522,7 +529,7 @@ int main() try
 
 	VkDescriptorSet shadowMapDescriptor{};
 	cw4::create_shadow_map_descriptor_set(window, dpool.handle, shadowMapLayout.handle, shadowDepthBufferView,
-		defaultSampler, shadowMapDescriptor);
+		shadowSampler, shadowMapDescriptor);
 
 	//------------------------------- CW3 - end ----------------------------------------------
 	// Application main loop
@@ -550,7 +557,7 @@ int main() try
 			if (changes.changedSize)
 			{
 				std::tie(depthBuffer, depthBufferView) = create_depth_buffer(window, allocator);
-				std::tie(shadowDepthBuffer, shadowDepthBufferView) = create_depth_buffer(window, allocator);
+				std::tie(shadowDepthBuffer, shadowDepthBufferView) = cw4::create_shadow_map_image_view(window, allocator);
 				
 			}
 
@@ -906,8 +913,7 @@ namespace
 
 		aSceneUniforms.projCam = aSceneUniforms.projection * aSceneUniforms.camera;
 
-
-		std::cout << "Camera position: " << aSceneUniforms.cameraPos.x << " " << aSceneUniforms.cameraPos.y << " " << aSceneUniforms.cameraPos.z << std::endl;
+		//std::cout << "Camera position: " << aSceneUniforms.cameraPos.x << " " << aSceneUniforms.cameraPos.y << " " << aSceneUniforms.cameraPos.z << std::endl;
 		//aSceneUniforms.inverseProjection = glm::inverse(aSceneUniforms.projection);
 
 		//aSceneUniforms.inverseCamera = aState.camera2world;
@@ -937,7 +943,7 @@ namespace
 		);
 		glm::mat4 lightProjection = glm::perspective(
 			lut::Radians(90.0_degf).value(),
-			aspect,
+			cfg::shadowMapWidth / (float)cfg::shadowMapHeight,
 			cfg::kCameraNear,
 			100.0f
 		);
@@ -2494,12 +2500,39 @@ namespace
 		}
 
 
-
-
 	}
 
 	namespace cw4
 	{
+		lut::Sampler create_shadow_sampler(lut::VulkanContext const& aContext)
+		{
+			VkSamplerCreateInfo samplerInfo{};
+			samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+			samplerInfo.magFilter = VK_FILTER_LINEAR;
+			samplerInfo.minFilter = VK_FILTER_LINEAR;
+			samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+			samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+			samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+			samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+			samplerInfo.anisotropyEnable = VK_FALSE;
+			samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+			samplerInfo.compareEnable = VK_TRUE;
+			samplerInfo.compareOp = VK_COMPARE_OP_LESS;
+
+			VkSampler sampler = VK_NULL_HANDLE;
+			if (auto const res = vkCreateSampler(aContext.device,
+				&samplerInfo,
+				nullptr,
+				&sampler);
+				VK_SUCCESS != res)
+			{
+				throw lut::Error("Unable to create sampler\n"
+					"vkCreateSampler() returned %s",
+					lut::to_string(res).c_str());
+			}
+			return lut::Sampler(aContext.device, sampler);
+		}
+
 
 		std::tuple<lut::Image, lut::ImageView> create_shadow_map_image_view(lut::VulkanWindow const& aWindow,
 			lut::Allocator const& aAllocator)
@@ -2508,8 +2541,8 @@ namespace
 			imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 			imageInfo.imageType = VK_IMAGE_TYPE_2D;
 			imageInfo.format = cfg::kDepthFormat;
-			imageInfo.extent.width = 4096;
-			imageInfo.extent.height = 4096;
+			imageInfo.extent.width = cfg::shadowMapWidth;
+			imageInfo.extent.height = cfg::shadowMapHeight;
 			imageInfo.extent.depth = 1;
 			imageInfo.mipLevels = 1;
 			imageInfo.arrayLayers = 1;
@@ -2696,14 +2729,14 @@ namespace
 			VkViewport viewport{};
 			viewport.x = 0.f;
 			viewport.y = 0.f;
-			viewport.width = float(aWindow.swapchainExtent.width);
-			viewport.height = float(aWindow.swapchainExtent.height);
+			viewport.width = float(cfg::shadowMapWidth);
+			viewport.height = float(cfg::shadowMapHeight);
 			viewport.minDepth = 0.f;
 			viewport.maxDepth = 1.f;
 
 			VkRect2D scissor{};
 			scissor.offset = VkOffset2D{ 0, 0 };
-			scissor.extent = VkExtent2D{ aWindow.swapchainExtent.width, aWindow.swapchainExtent.height };
+			scissor.extent = VkExtent2D{ cfg::shadowMapWidth, cfg::shadowMapHeight };
 
 			//DEPTH INFO FOR DEPTH BUFFER
 			VkPipelineDepthStencilStateCreateInfo depthInfo{};
@@ -2821,12 +2854,16 @@ namespace
 			VkClearValue clearValues[1]{};
 			clearValues[0].depthStencil.depth = 1.f;
 
+			VkExtent2D extent{};
+			extent.width = cfg::shadowMapWidth;
+			extent.height = cfg::shadowMapHeight;
+
 			VkRenderPassBeginInfo passInfo{};
 			passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			passInfo.renderPass = aRenderPass;
 			passInfo.framebuffer = aFramebuffer;
 			passInfo.renderArea.offset = VkOffset2D{ 0, 0 };
-			passInfo.renderArea.extent = aImageExtent;
+			passInfo.renderArea.extent = extent;
 			passInfo.clearValueCount = 1;
 			passInfo.pClearValues = clearValues;
 
@@ -3134,8 +3171,8 @@ namespace
 			fbInfo.renderPass = aRenderPass;
 			fbInfo.attachmentCount = 1;
 			fbInfo.pAttachments = attachments;
-			fbInfo.width = aWindow.swapchainExtent.width;
-			fbInfo.height = aWindow.swapchainExtent.height;
+			fbInfo.width = cfg::shadowMapWidth;
+			fbInfo.height = cfg::shadowMapHeight;
 			fbInfo.layers = 1;
 
 			VkFramebuffer fb = VK_NULL_HANDLE;
