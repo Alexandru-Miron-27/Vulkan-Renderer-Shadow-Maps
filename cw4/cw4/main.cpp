@@ -56,10 +56,6 @@ namespace
 		// See sources in exercise4/shaders/*. 
 #		define SHADERDIR_ "assets/cw4/shaders/"
 #		define ASSETSDIR_ "assets/cw4/"
-		/*constexpr char const* kAlphaMaskVertShaderPath = SHADERDIR_ "shaderMaterial.vert.spv";
-		constexpr char const* kAlphaMaskFragShaderPath = SHADERDIR_ "shaderAlphaMask.frag.spv";
-		constexpr char const* kMaterialVertShaderPath = SHADERDIR_ "shaderMaterial.vert.spv";
-		constexpr char const* kMaterialFragShaderPath = SHADERDIR_ "shaderMaterial.frag.spv";*/
 		constexpr char const* kRenderPassAVertShaderPath = SHADERDIR_ "renderPassA.vert.spv";
 		constexpr char const* kRenderPassAFragShaderPath = SHADERDIR_ "renderPassA.frag.spv";
 		constexpr char const* kRenderPassBVertShaderPath = SHADERDIR_ "renderPassB.vert.spv";
@@ -70,10 +66,8 @@ namespace
 
 		constexpr VkFormat kDepthFormat = VK_FORMAT_D32_SFLOAT;
 		constexpr VkFormat kBaseColorFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
-		//constexpr VkFormat kBaseColorFormat = VK_FORMAT_R8G8B8A8_UNORM;
 		constexpr VkFormat kMaterialPropertiesFormat = VK_FORMAT_R8G8_UNORM;
 		constexpr VkFormat kEmissiveFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
-		//constexpr VkFormat kEmissiveFormat = VK_FORMAT_R8G8B8A8_UNORM;
 		constexpr VkFormat kNormalFormat = VK_FORMAT_A2R10G10B10_UNORM_PACK32;
 		constexpr VkFormat kBrightTexture = VK_FORMAT_A2R10G10B10_UNORM_PACK32;
 
@@ -92,8 +86,8 @@ namespace
 
 		constexpr float kCameraMouseSensitivity = 0.01f;
 
-		constexpr int shadowMapWidth = 16384;
-		constexpr int shadowMapHeight = 16384;
+		constexpr int shadowMapWidth = 8192;
+		constexpr int shadowMapHeight = 8192;
 
 		glm::vec3 gLightPosition(0.0f, 0.0f, 0.0f);
 		glm::vec3 gLightColor(1.0f, 1.0f, 1.0f);
@@ -380,7 +374,6 @@ int main() try
 	std::vector<lut::Fence> cbfences_A;
 	std::vector<lut::Fence> cbfences_B;
 
-
 	cbuffers_A.emplace_back(lut::alloc_command_buffer(window, cpool_A.handle));
 	cbfences_A.emplace_back(lut::create_fence(window, VK_FENCE_CREATE_SIGNALED_BIT));
 	for (std::size_t i = 0; i < framebuffersB.size(); ++i)
@@ -400,7 +393,6 @@ int main() try
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY
 	);
-
 
 	//TODO- (Section 3) create descriptor pool
 	lut::DescriptorPool dpool = lut::create_descriptor_pool(window);
@@ -426,7 +418,6 @@ int main() try
 		vkUpdateDescriptorSets(window.device, numSets, desc, 0, nullptr);
 	}
 
-
 	//TODO- (Section 4) create default texture sampler
 	lut::Sampler defaultSampler = lut::create_default_sampler(window);
 
@@ -448,21 +439,6 @@ int main() try
 	materialTextureDescriptors.resize(bakedModel.materials.size());
 	std::vector<std::string> alphaMaskTexturePaths{};
 	std::vector<std::string> normalMapTexturePaths{};
-
-	//testing materials
-	{
-		std::ofstream testMaterials("../testMaterials.txt");
-		for (std::size_t i = 0; i < bakedModel.materials.size(); i++)
-		{
-			testMaterials << " ---------------------------------- START OF MATERIAL " << i << "----------------------------------" << std::endl;
-			testMaterials << "Base color texture " << bakedModel.materials[i].baseColorTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].baseColorTextureId].path << std::endl;
-			testMaterials << "Rougness texture " << bakedModel.materials[i].roughnessTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].roughnessTextureId].path << std::endl;
-			testMaterials << "Metalness texture " << bakedModel.materials[i].metalnessTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].metalnessTextureId].path << std::endl;
-			testMaterials << "Alpha mask texture " << bakedModel.materials[i].alphaMaskTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].alphaMaskTextureId].path << std::endl;
-			testMaterials << "Normal map texture " << bakedModel.materials[i].normalMapTextureId << " with path " << bakedModel.textures[bakedModel.materials[i].normalMapTextureId].path << std::endl;
-		}
-		testMaterials.close();
-	}
 	
 	for (std::size_t i = 0; i < bakedModel.materials.size(); i++)
 	{
@@ -536,7 +512,6 @@ int main() try
 	bool recreateSwapchain = false;
 
 	auto previousClock = Clock_::now();
-
 
 	while (!glfwWindowShouldClose(window.window))
 	{
@@ -668,7 +643,8 @@ int main() try
 		assert(std::size_t(imageIndex) < framebuffersB.size());
 
 
-		cw4::record_commands_A(cbuffers_A[0], renderPassA.handle, framebufferA.handle, shadowPassPipe.handle, shadowLayout.handle, window.swapchainExtent,
+		cw4::record_commands_A(cbuffers_A[0], renderPassA.handle, framebufferA.handle, shadowPassPipe.handle,
+			shadowLayout.handle, window.swapchainExtent,
 			sceneUBO.buffer, sceneUniforms, sceneDescriptors, bakedMeshBuffers, bakedModel);
 		cw4::record_commands_B(cbuffers_B[imageIndex], renderPassB.handle, framebuffersB[imageIndex].handle,
 			fullscreenPipe.handle, fullscreenLayout.handle,
@@ -685,7 +661,6 @@ int main() try
 			renderBFinished.handle
 		);
 
-
 		cw3::submit_commands_B(
 			window,
 			cbuffers_B[imageIndex],
@@ -694,7 +669,6 @@ int main() try
 			renderAFinished.handle,
 			renderBFinished.handle
 		);
-
 
 		//TODO- (Section 1)  - present rendered images (note: use the present_results() method)
 		VkPresentInfoKHR presentInfo{};
@@ -912,12 +886,6 @@ namespace
 		aSceneUniforms.cameraPos = aState.camera2world[3];
 
 		aSceneUniforms.projCam = aSceneUniforms.projection * aSceneUniforms.camera;
-
-		//std::cout << "Camera position: " << aSceneUniforms.cameraPos.x << " " << aSceneUniforms.cameraPos.y << " " << aSceneUniforms.cameraPos.z << std::endl;
-		//aSceneUniforms.inverseProjection = glm::inverse(aSceneUniforms.projection);
-
-		//aSceneUniforms.inverseCamera = aState.camera2world;
-
 
 		if (cfg::glightMoving == true)
 		{
@@ -3038,6 +3006,7 @@ namespace
 
 			//End the render pass
 			vkCmdEndRenderPass(aCmdBuff);
+
 
 			//End command recording
 			if (auto const res = vkEndCommandBuffer(aCmdBuff);

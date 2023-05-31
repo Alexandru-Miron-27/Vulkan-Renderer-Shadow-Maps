@@ -29,6 +29,7 @@ layout (set = 2, binding = 0) uniform sampler2DShadow uShadowMap;
 
  const float eps = 0.0001;
  const float pi = 3.141592;
+ const float shadowMapSize = 8192.0;
 
 float computeD( vec3 normal, vec3 halfVec, float shininess)
  {
@@ -51,23 +52,13 @@ float computeD( vec3 normal, vec3 halfVec, float shininess)
 	return G;
  }
 
- float computeShadow(vec4 lightSpacePos)
+ float computeShadow()
  {
- /*
-	vec4 projCoords = lightSpacePos / lightSpacePos.w;
-	projCoords.xy = projCoords.xy * 0.5 + 0.5;
-	//float bias = 0.001;
-	//projCoords.z -= bias;
-	float shadow = textureProj(uShadowMap, projCoords);
-	if (shadow < 1.0)
-		shadow = 0.2;
-		*/
+	vec4 lightSpacePos = uScene.lightSpaceMatrix * vec4(vsPos, 1.0);
+	vec3 shadowCoords = lightSpacePos.xyz / lightSpacePos.w;
+	shadowCoords = shadowCoords * 0.5 + 0.5; 
 
-	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
-	projCoords = projCoords * 0.5 + 0.5; // Transform to [0, 1]
-
-	// define the size of the area around the current pixel where we will sample
-	float texelSize = 1.0 / 16384.0; // assuming the shadow map is 2048x2048
+	float texelSize = 1.0 / shadowMapSize; 
 	float bias = 0.005;
 
 	float shadow = 0.0;
@@ -76,13 +67,12 @@ float computeD( vec3 normal, vec3 halfVec, float shininess)
 		vec2(-1, 0), vec2(0, 0), vec2(1, 0),
 		vec2(-1, 1), vec2(0, 1), vec2(1, 1)
 	);
-
-	// calculate and average the shadow
+	
 	for (int i = 0; i < 9; i++) {
-		float pcfDepth = textureProj(uShadowMap, vec4((projCoords.xy + offsets[i] * texelSize), projCoords.z - bias, 1.0));
-		shadow += pcfDepth * 0.5 + 0.5;
+		float pcf = textureProj(uShadowMap, vec4((shadowCoords.xy + offsets[i] * texelSize),
+		shadowCoords.z - bias, 1.0));
+		shadow += pcf * 0.5 + 0.5;
 	}
-
 	shadow /= 9.0;
 
 	return shadow;
@@ -127,13 +117,10 @@ void main()
 	//emitted light is 0
 	vec3 Lo = 0.0 + ambientTerm + fr * uScene.lightColor
 	* max(dot(normal, lightDir), 0.0);
-
-	vec4 lightSpacePos = uScene.lightSpaceMatrix * vec4(vsPos, 1.0);
 	
-    float shadow = computeShadow(lightSpacePos);
+    float shadow = computeShadow();
 
 	Lo *= shadow;
 
 	oColor = vec4(Lo, 1.0);
-
 }
